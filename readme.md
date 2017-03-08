@@ -46,7 +46,7 @@ Either:
 
 Type: `number`<br>
 Default: `1024`<br>
-Maxiumum: `1024`
+Maximum: `1024`
 
 Size of the returned icon.
 
