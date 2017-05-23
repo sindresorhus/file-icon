@@ -1,5 +1,8 @@
+import fs from 'fs';
+import path from 'path';
 import test from 'ava';
 import fileType from 'file-type';
+import tempy from 'tempy';
 import m from '.';
 
 test('app name', async t => {
@@ -12,4 +15,14 @@ test('app bundle id', async t => {
 
 test('file path', async t => {
 	t.is(fileType(await m('/Applications/Safari.app')).ext, 'png');
+});
+
+test('write file', async t => {
+	const destination = path.join(tempy.directory(), 'icon.png');
+
+	await m('Safari', {destination});
+
+	const icon = fs.readFileSync(destination);
+
+	t.is(fileType(icon).ext, 'png');
 });

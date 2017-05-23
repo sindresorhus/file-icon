@@ -43,6 +43,7 @@
   "devDependencies": {
     "ava": "*",
     "file-type": "^4.1.0",
+    "tempy": "^0.1.0",
     "xo": "*"
   }
 }

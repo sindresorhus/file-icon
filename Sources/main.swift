@@ -75,4 +75,13 @@ guard let iconData = getIcon(input: CLI.args[0], size: Int(CLI.args[1])!) else {
 	exit(1)
 }
 
+if (CLI.args.count >= 3) {
+	do {
+		try iconData.write(to: URL(fileURLWithPath: CLI.args[2]), options: .atomic)
+	} catch {
+		CLI.printErr(error);
+		exit(1);
+	}
+}
+
 CLI.stdout.write(iconData)

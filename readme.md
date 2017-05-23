@@ -23,12 +23,16 @@ fileIcon('Safari').then(buffer => {
 fileIcon('com.apple.Safari').then(buffer => {});
 
 fileIcon('unicorn.jpg').then(buffer => {});
+
+fileIcon('Safari', {destination: 'safari-icon.png'}).then(() => {
+	const buffer = fs.readFileSync('safari-icon.png');
+});
 ```
 
 
 ## API
 
-### fileIcon(input, [size])
+### fileIcon(input, [options])
 
 Returns a `Promise<Buffer>` for a PNG image.
 
@@ -42,13 +46,23 @@ Either:
 - Path to an app
 - Path to a file
 
-### size
+### options
+
+Type: `object`
+
+#### size
 
 Type: `number`<br>
 Default: `1024`<br>
 Maximum: `1024`
 
 Size of the returned icon.
+
+#### destination
+
+Type: `string`
+
+Output file for the icon
 
 
 ## Related
