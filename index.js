@@ -1,5 +1,8 @@
 'use strict';
+const path = require('path');
 const execa = require('execa');
+
+const bin = path.join(__dirname, '.build/release/file-icon');
 
 module.exports = (file, size) => {
 	if (process.platform !== 'darwin') {
@@ -18,8 +21,5 @@ module.exports = (file, size) => {
 		return Promise.reject(new Error('Size must be 1024 or less'));
 	}
 
-	return execa.stdout('./main', [file, size], {
-		cwd: __dirname,
-		encoding: 'buffer'
-	});
+	return execa.stdout(bin, [file, size], {encoding: 'buffer'});
 };
