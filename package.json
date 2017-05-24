@@ -38,7 +38,8 @@
     "swift"
   ],
   "dependencies": {
-    "execa": "^0.6.0"
+    "execa": "^0.6.0",
+    "filenamify": "^2.0.0"
   },
   "devDependencies": {
     "ava": "*",

@@ -16,15 +16,15 @@ $ npm install --save file-icon
 const fs = require('fs');
 const fileIcon = require('file-icon');
 
-fileIcon('Safari').then(buffer => {
+fileIcon.buffer('Safari').then(buffer => {
 	fs.writeFileSync('safari-icon.png', buffer);
 });
 
-fileIcon('com.apple.Safari').then(buffer => {});
+fileIcon.buffer('com.apple.Safari', {size: 64}).then(buffer => {});
 
-fileIcon('unicorn.jpg').then(buffer => {});
+fileIcon.buffer('unicorn.jpg').then(buffer => {});
 
-fileIcon('Safari', {destination: 'safari-icon.png'}).then(() => {
+fileIcon.file('Safari', {destination: 'safari-icon.png'}).then(() => {
 	const buffer = fs.readFileSync('safari-icon.png');
 });
 ```
@@ -32,7 +32,7 @@ fileIcon('Safari', {destination: 'safari-icon.png'}).then(() => {
 
 ## API
 
-### fileIcon(input, [options])
+### fileIcon.buffer(input, [options])
 
 Returns a `Promise<Buffer>` for a PNG image.
 
@@ -58,8 +58,25 @@ Maximum: `1024`
 
 Size of the returned icon.
 
+### fileIcon.file(input, [options])
+
+Returns a `Promise` for when the file is written to `destination`.
+
+### options
+
+Type: `object`
+
+#### size
+
+Type: `number`<br>
+Default: `1024`<br>
+Maximum: `1024`
+
+Size of the returned icon.
+
 #### destination
 
+*Required*<br>
 Type: `string`
 
 Output file for the icon

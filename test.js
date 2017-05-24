@@ -6,21 +6,21 @@ import tempy from 'tempy';
 import m from '.';
 
 test('app name', async t => {
-	t.is(fileType(await m('Safari')).ext, 'png');
+	t.is(fileType(await m.buffer('Safari')).ext, 'png');
 });
 
 test('app bundle id', async t => {
-	t.is(fileType(await m('com.apple.Safari')).ext, 'png');
+	t.is(fileType(await m.buffer('com.apple.Safari')).ext, 'png');
 });
 
 test('file path', async t => {
-	t.is(fileType(await m('/Applications/Safari.app')).ext, 'png');
+	t.is(fileType(await m.buffer('/Applications/Safari.app')).ext, 'png');
 });
 
 test('write file', async t => {
 	const destination = path.join(tempy.directory(), 'icon.png');
 
-	await m('Safari', {destination});
+	await m.file('Safari', {destination});
 
 	const icon = fs.readFileSync(destination);
 
