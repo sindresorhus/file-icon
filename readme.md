@@ -25,7 +25,7 @@ fileIcon.buffer('com.apple.Safari', {size: 64}).then(buffer => {});
 fileIcon.buffer('unicorn.jpg').then(buffer => {});
 
 fileIcon.file('Safari', {destination: 'safari-icon.png'}).then(() => {
-	const buffer = fs.readFileSync('safari-icon.png');
+	console.log('Done');
 });
 ```
 
