@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import test from 'ava';
 import fileType from 'file-type';
 import tempy from 'tempy';
