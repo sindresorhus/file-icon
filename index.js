@@ -31,7 +31,6 @@ const validate = (file, opts) => {
 
 exports.buffer = (file, opts) => Promise.resolve().then(() => {
 	opts = validate(file, opts);
-
 	return execa.stdout(bin, [file, opts.size], {encoding: 'buffer'});
 });
 
