@@ -1,25 +1,47 @@
 'use strict';
 const path = require('path');
 const execa = require('execa');
+const filenamify = require('filenamify');
 
 const bin = path.join(__dirname, '.build/release/file-icon');
 
-module.exports = (file, size) => {
+const validate = (file, opts) => {
+	opts = Object.assign({
+		size: 1024
+	}, opts);
+
 	if (process.platform !== 'darwin') {
-		return Promise.reject(new Error('macOS only'));
+		throw new Error('macOS only');
 	}
 
 	if (!file) {
-		return Promise.reject(new Error('Specify an app name, bundle identifier, or file path'));
+		throw new Error('Specify an app name, bundle identifier, or file path');
 	}
 
-	if (typeof size !== 'number') {
-		size = 1024;
+	if (typeof opts.size !== 'number') {
+		opts.size = 1024;
 	}
 
-	if (size > 1024) {
-		return Promise.reject(new Error('Size must be 1024 or less'));
+	if (opts.size > 1024) {
+		throw new Error('Size must be 1024 or less');
 	}
 
-	return execa.stdout(bin, [file, size], {encoding: 'buffer'});
+	return opts;
 };
+
+exports.buffer = (file, opts) => Promise.resolve().then(() => {
+	opts = validate(file, opts);
+	return execa.stdout(bin, [file, opts.size], {encoding: 'buffer'});
+});
+
+exports.file = (file, opts) => Promise.resolve().then(() => {
+	opts = Object.assign({
+		destination: filenamify(file) + '.png'
+	}, validate(file, opts));
+
+	if (typeof opts.destination !== 'string') {
+		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof opts.destination}\``);
+	}
+
+	return execa(bin, [file, opts.size, opts.destination]);
+});
