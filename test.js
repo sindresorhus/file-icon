@@ -18,11 +18,8 @@ test('file path', async t => {
 });
 
 test('write file', async t => {
-	const destination = path.join(tempy.directory(), 'icon.png');
-
+	const destination = tempy.file({extension: 'png'});
 	await m.file('Safari', {destination});
-
 	const icon = fs.readFileSync(destination);
-
 	t.is(fileType(icon).ext, 'png');
 });
