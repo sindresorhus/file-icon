@@ -48,7 +48,7 @@ Either:
 
 ### options
 
-Type: `object`
+Type: `Object`
 
 #### size
 
@@ -64,7 +64,7 @@ Returns a `Promise` for when the file is written to `destination`.
 
 ### options
 
-Type: `object`
+Type: `Object`
 
 #### size
 
@@ -79,7 +79,7 @@ Size of the returned icon.
 *Required*<br>
 Type: `string`
 
-Output file for the icon
+Output file for the icon.
 
 
 ## Related
