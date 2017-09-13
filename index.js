@@ -3,7 +3,7 @@ const path = require('path');
 const execa = require('execa');
 const filenamify = require('filenamify');
 
-const bin = path.join(__dirname, '.build/release/file-icon');
+const bin = path.join(__dirname, 'file-icon');
 
 const validate = (file, opts) => {
 	opts = Object.assign({

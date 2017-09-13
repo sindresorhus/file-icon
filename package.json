@@ -14,12 +14,12 @@
 	},
 	"scripts": {
 		"test": "xo && ava",
-		"build": "swift build --configuration=release -Xswiftc -static-stdlib -Xswiftc -target -Xswiftc x86_64-apple-macosx10.11",
+		"build": "swift build --configuration=release -Xswiftc -static-stdlib -Xswiftc -target -Xswiftc x86_64-apple-macosx10.11 && mv .build/release/file-icon .",
 		"prepublish": "npm run build"
 	},
 	"files": [
 		"index.js",
-		".build/release/file-icon"
+		"file-icon"
 	],
 	"keywords": [
 		"macos",
