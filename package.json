@@ -1,50 +1,50 @@
 {
-  "name": "file-icon",
-  "version": "1.0.0",
-  "description": "Get the icon of a file or app as a PNG image (macOS)",
-  "license": "MIT",
-  "repository": "sindresorhus/file-icon",
-  "author": {
-    "name": "Sindre Sorhus",
-    "email": "sindresorhus@gmail.com",
-    "url": "sindresorhus.com"
-  },
-  "engines": {
-    "node": ">=4"
-  },
-  "scripts": {
-    "test": "xo && ava",
-    "build": "swift build --configuration=release -Xswiftc -static-stdlib -Xswiftc -target -Xswiftc x86_64-apple-macosx10.11",
-    "prepublish": "npm run build"
-  },
-  "files": [
-    "index.js",
-    ".build/release/file-icon"
-  ],
-  "keywords": [
-    "macos",
-    "file",
-    "icon",
-    "app",
-    "png",
-    "application",
-    "icons",
-    "path",
-    "filepath",
-    "bundle",
-    "id",
-    "image",
-    "size",
-    "swift"
-  ],
-  "dependencies": {
-    "execa": "^0.6.0",
-    "filenamify": "^2.0.0"
-  },
-  "devDependencies": {
-    "ava": "*",
-    "file-type": "^4.1.0",
-    "tempy": "^0.1.0",
-    "xo": "*"
-  }
+	"name": "file-icon",
+	"version": "1.0.0",
+	"description": "Get the icon of a file or app as a PNG image (macOS)",
+	"license": "MIT",
+	"repository": "sindresorhus/file-icon",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=4"
+	},
+	"scripts": {
+		"test": "xo && ava",
+		"build": "swift build --configuration=release -Xswiftc -static-stdlib -Xswiftc -target -Xswiftc x86_64-apple-macosx10.11",
+		"prepublish": "npm run build"
+	},
+	"files": [
+		"index.js",
+		".build/release/file-icon"
+	],
+	"keywords": [
+		"macos",
+		"file",
+		"icon",
+		"app",
+		"png",
+		"application",
+		"icons",
+		"path",
+		"filepath",
+		"bundle",
+		"id",
+		"image",
+		"size",
+		"swift"
+	],
+	"dependencies": {
+		"execa": "^0.8.0",
+		"filenamify": "^2.0.0"
+	},
+	"devDependencies": {
+		"ava": "*",
+		"file-type": "^6.1.0",
+		"tempy": "^0.1.0",
+		"xo": "*"
+	}
 }

@@ -6,7 +6,7 @@
 ## Install
 
 ```
-$ npm install --save file-icon
+$ npm install file-icon
 ```
 
 
