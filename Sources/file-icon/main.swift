@@ -1,7 +1,7 @@
 import Cocoa
 
 extension NSBitmapImageRep {
-	var png: Data? {
+	func png() -> Data? {
 		return representation(using: .png, properties: [:])
 	}
 }
@@ -13,8 +13,8 @@ extension Data {
 }
 
 extension NSImage {
-	var png: Data? {
-		return tiffRepresentation?.bitmap?.png
+	func png() -> Data? {
+		return tiffRepresentation?.bitmap?.png()
 	}
 
 	func resizedForFile(to size: Int) -> NSImage {
@@ -68,28 +68,33 @@ func getIcon(input: String, size: Int) -> Data? {
 		return nil
 	}
 
-	return ws.icon(forFile: path).resizedForFile(to: size).png
+	return ws.icon(forFile: path).resizedForFile(to: size).png()
 }
 
 func getIcon(pid: Int, size: Int) -> Data? {
-	return NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png
+	return NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png()
 }
 
+let input = CLI.arguments[0]
+let size = Int(CLI.arguments[1])!
+let isPid = CLI.arguments[2] == "true"
+
 guard let icon: Data = {
-	let isPid = CLI.arguments[2] == "true"
 	if isPid {
-		return getIcon(pid: Int(CLI.arguments[0])!, size: Int(CLI.arguments[1])!)
+		return getIcon(pid: Int(input)!, size: size)
 	} else {
-		return getIcon(input: CLI.arguments[0], size: Int(CLI.arguments[1])!)
+		return getIcon(input: input, size: size)
 	}
 }() else {
-	CLI.printErr("Couldn't find: \(CLI.arguments[0])")
+	CLI.printErr("Couldn't find: \(input)")
 	exit(1)
 }
 
 if CLI.arguments.count >= 4 {
+	let destination = CLI.arguments[3]
+	
 	do {
-		try icon.write(to: URL(fileURLWithPath: CLI.arguments[3]), options: .atomic)
+		try icon.write(to: URL(fileURLWithPath: destination), options: .atomic)
 	} catch {
 		CLI.printErr(error)
 		exit(1)
