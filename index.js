@@ -1,7 +1,6 @@
 'use strict';
 const path = require('path');
 const execa = require('execa');
-const filenamify = require('filenamify');
 
 const bin = path.join(__dirname, 'file-icon');
 
@@ -35,9 +34,7 @@ exports.buffer = (file, opts) => Promise.resolve().then(() => {
 });
 
 exports.file = (file, opts) => Promise.resolve().then(() => {
-	opts = Object.assign({
-		destination: filenamify(file) + '.png'
-	}, validate(file, opts));
+	opts = Object.assign({}, validate(file, opts));
 
 	if (typeof opts.destination !== 'string') {
 		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof opts.destination}\``);
