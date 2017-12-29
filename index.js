@@ -30,7 +30,10 @@ const validate = (file, opts) => {
 
 exports.buffer = (file, opts) => Promise.resolve().then(() => {
 	opts = validate(file, opts);
-	return execa.stdout(bin, [file, opts.size], {encoding: 'buffer'});
+
+	const isPid = typeof file === 'number';
+
+	return execa.stdout(bin, [file, opts.size, isPid], {encoding: 'buffer'});
 });
 
 exports.file = (file, opts) => Promise.resolve().then(() => {
@@ -40,5 +43,7 @@ exports.file = (file, opts) => Promise.resolve().then(() => {
 		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof opts.destination}\``);
 	}
 
-	return execa(bin, [file, opts.size, opts.destination]);
+	const isPid = typeof file === 'number';
+
+	return execa(bin, [file, opts.size, isPid, opts.destination]);
 });

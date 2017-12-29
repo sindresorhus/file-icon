@@ -71,18 +71,29 @@ func getIcon(input: String, size: Int) -> Data? {
 	return ws.icon(forFile: path).resizedForFile(to: size).png
 }
 
-guard let iconData = getIcon(input: CLI.arguments[0], size: Int(CLI.arguments[1])!) else {
+func getIcon(pid: Int, size: Int) -> Data? {
+	return NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png
+}
+
+guard let icon: Data = {
+	let isPid = CLI.arguments[2] == "true"
+	if isPid {
+		return getIcon(pid: Int(CLI.arguments[0])!, size: Int(CLI.arguments[1])!)
+	} else {
+		return getIcon(input: CLI.arguments[0], size: Int(CLI.arguments[1])!)
+	}
+}() else {
 	CLI.printErr("Couldn't find: \(CLI.arguments[0])")
 	exit(1)
 }
 
-if CLI.arguments.count >= 3 {
+if CLI.arguments.count >= 4 {
 	do {
-		try iconData.write(to: URL(fileURLWithPath: CLI.arguments[2]), options: .atomic)
+		try icon.write(to: URL(fileURLWithPath: CLI.arguments[3]), options: .atomic)
 	} catch {
 		CLI.printErr(error)
 		exit(1)
 	}
 }
 
-CLI.stdout.write(iconData)
+CLI.stdout.write(icon)

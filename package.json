@@ -35,7 +35,10 @@
     "id",
     "image",
     "size",
-    "swift"
+    "swift",
+    "pid",
+    "process",
+    "id"
   ],
   "dependencies": {
     "execa": "^0.8.0"

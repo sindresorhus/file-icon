@@ -38,13 +38,14 @@ Returns a `Promise<Buffer>` for a PNG image.
 
 ### input
 
-Type: `string`
+Type: `string` `number`
 
 Either:
-- App name
-- App bundle identifier
-- Path to an app
-- Path to a file
+- App name *(string)*
+- App bundle identifier *(string)*
+- App process ID *(number)*
+- Path to an app *(string)*
+- Path to a file *(string)*
 
 ### options
 
