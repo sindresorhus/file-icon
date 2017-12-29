@@ -1,6 +1,6 @@
 {
 	"name": "file-icon",
-	"version": "2.0.1",
+	"version": "2.1.0",
 	"description": "Get the icon of a file or app as a PNG image (macOS)",
 	"license": "MIT",
 	"repository": "sindresorhus/file-icon",
