@@ -4,10 +4,10 @@ const execa = require('execa');
 
 const bin = path.join(__dirname, 'file-icon');
 
-const validate = (file, opts) => {
-	opts = Object.assign({
+const validate = (file, options) => {
+	options = Object.assign({
 		size: 1024
-	}, opts);
+	}, options);
 
 	if (process.platform !== 'darwin') {
 		throw new Error('macOS only');
@@ -17,33 +17,33 @@ const validate = (file, opts) => {
 		throw new Error('Specify an app name, bundle identifier, or file path');
 	}
 
-	if (typeof opts.size !== 'number') {
-		opts.size = 1024;
+	if (typeof options.size !== 'number') {
+		options.size = 1024;
 	}
 
-	if (opts.size > 1024) {
+	if (options.size > 1024) {
 		throw new Error('Size must be 1024 or less');
 	}
 
-	return opts;
+	return options;
 };
 
-exports.buffer = (file, opts) => Promise.resolve().then(() => {
-	opts = validate(file, opts);
+exports.buffer = async (file, options) => {
+	options = validate(file, options);
 
 	const isPid = typeof file === 'number';
 
-	return execa.stdout(bin, [file, opts.size, isPid], {encoding: 'buffer'});
-});
+	return execa.stdout(bin, [file, options.size, isPid], {encoding: 'buffer'});
+};
 
-exports.file = (file, opts) => Promise.resolve().then(() => {
-	opts = Object.assign({}, validate(file, opts));
+exports.file = async (file, options) => {
+	options = Object.assign({}, validate(file, options));
 
-	if (typeof opts.destination !== 'string') {
-		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof opts.destination}\``);
+	if (typeof options.destination !== 'string') {
+		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof options.destination}\``);
 	}
 
 	const isPid = typeof file === 'number';
 
-	return execa(bin, [file, opts.size, isPid, opts.destination]);
-});
+	return execa(bin, [file, options.size, isPid, options.destination]);
+};

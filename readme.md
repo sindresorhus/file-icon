@@ -16,17 +16,21 @@ $ npm install file-icon
 const fs = require('fs');
 const fileIcon = require('file-icon');
 
-fileIcon.buffer('Safari').then(buffer => {
+(async () => {
+	const buffer = await fileIcon.buffer('Safari')
 	fs.writeFileSync('safari-icon.png', buffer);
-});
 
-fileIcon.buffer('com.apple.Safari', {size: 64}).then(buffer => {});
+	// Or by bundle ID
+	const buffer2 = await fileIcon.buffer('com.apple.Safari', {size: 64});
+	fs.writeFileSync('safari-icon.png', buffer2);
 
-fileIcon.buffer('unicorn.jpg').then(buffer => {});
+	// Or by filename
+	const buffer3 = await fileIcon.buffer('unicorn.jpg');
+	fs.writeFileSync('jpeg-file-type-icon.png', buffer3);
 
-fileIcon.file('Safari', {destination: 'safari-icon.png'}).then(() => {
+	await fileIcon.file('Safari', {destination: 'safari-icon.png'});
 	console.log('Done');
-});
+})();
 ```
 
 
