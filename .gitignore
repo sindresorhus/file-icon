@@ -1,5 +1,5 @@
 node_modules
-/.build
-/*.xcodeproj
-/file-icon
 yarn.lock
+/*.xcodeproj
+/.build
+/file-icon

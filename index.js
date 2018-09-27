@@ -1,13 +1,22 @@
 'use strict';
 const path = require('path');
-const execa = require('execa');
+const util = require('util');
+const {execFile} = require('child_process');
 
+const execFileP = util.promisify(execFile);
 const bin = path.join(__dirname, 'file-icon');
+const HUNDRED_MEGABYTES = 1024 * 1024 * 100;
+
+const spawnOptions = {
+	encoding: null,
+	maxBuffer: HUNDRED_MEGABYTES
+};
 
 const validate = (file, options) => {
-	options = Object.assign({
-		size: 1024
-	}, options);
+	options = {
+		size: 1024,
+		...options
+	};
 
 	if (process.platform !== 'darwin') {
 		throw new Error('macOS only');
@@ -33,11 +42,13 @@ exports.buffer = async (file, options) => {
 
 	const isPid = typeof file === 'number';
 
-	return execa.stdout(bin, [file, options.size, isPid], {encoding: 'buffer'});
+	const {stdout} = await execFileP(bin, [file, options.size, isPid], spawnOptions);
+
+	return stdout;
 };
 
 exports.file = async (file, options) => {
-	options = Object.assign({}, validate(file, options));
+	options = validate(file, options);
 
 	if (typeof options.destination !== 'string') {
 		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof options.destination}\``);
@@ -45,5 +56,5 @@ exports.file = async (file, options) => {
 
 	const isPid = typeof file === 'number';
 
-	return execa(bin, [file, options.size, isPid, options.destination]);
+	await execFileP(bin, [file, options.size, isPid, options.destination], spawnOptions);
 };
