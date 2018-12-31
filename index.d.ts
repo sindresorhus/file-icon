@@ -1,10 +1,10 @@
 declare namespace FileIcon {
 	interface CommonOptions {
-		size: number;
+		size?: number;
 	}
 
 	interface FileOptions extends CommonOptions {
-		destination: string;
+		destination?: string;
 	}
 
 	interface BufferOptions extends CommonOptions {}
