@@ -37,7 +37,7 @@ const validate = (file, options) => {
 	return options;
 };
 
-exports.buffer = async (file, options) => {
+const processBuffer = async (file, options) => {
 	options = validate(file, options);
 
 	const isPid = typeof file === 'number';
@@ -45,6 +45,13 @@ exports.buffer = async (file, options) => {
 	const {stdout} = await execFileP(bin, [file, options.size, isPid], spawnOptions);
 
 	return stdout;
+};
+
+exports.buffer = async (file, options) => {
+	if (Array.isArray(file)) {
+		return Promise.all(file.map(f => processBuffer(f, options)));
+	}
+	return processBuffer(file, options);
 };
 
 exports.file = async (file, options) => {

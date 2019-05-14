@@ -28,6 +28,11 @@ const fileIcon = require('file-icon');
 	const buffer3 = await fileIcon.buffer('unicorn.jpg');
 	fs.writeFileSync('jpeg-file-type-icon.png', buffer3);
 
+	// Array
+	const buffers = await fileIcon.buffer(['Safari', 'Google Chrome'])
+	fs.writeFileSync('safari-icon.png', buffers[0]);
+	fs.writeFileSync('chrome-icon.png', buffers[1]);
+
 	await fileIcon.file('Safari', {destination: 'safari-icon.png'});
 	console.log('Done');
 })();
@@ -42,7 +47,7 @@ Returns a `Promise<Buffer>` for a PNG image.
 
 ### input
 
-Type: `string` `number`
+Type: `string` `number` `Array<string>` `Array<number>`
 
 Either:
 - App name *(string)*

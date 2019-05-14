@@ -23,6 +23,13 @@ test('file path', async t => {
 	t.is(fileType(await fileIcon.buffer('/Applications/Safari.app')).ext, 'png');
 });
 
+test('file array path', async t => {
+	const files = await fileIcon.buffer(['/Applications/Safari.app', '/Applications/Photos.app']);
+	t.is(files.length, 2);
+	t.is(fileType(files[0]).ext, 'png');
+	t.is(fileType(files[1]).ext, 'png');
+});
+
 test('write file', async t => {
 	const destination = tempy.file({extension: 'png'});
 	await fileIcon.file('Safari', {destination});
