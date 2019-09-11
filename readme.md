@@ -36,13 +36,13 @@ const fileIcon = require('file-icon');
 
 ## API
 
-### fileIcon.buffer(input, [options])
+### fileIcon.buffer(input, options?)
 
 Returns a `Promise<Buffer>` for a PNG image.
 
 ### input
 
-Type: `string` `number`
+Type: `string | number`
 
 Either:
 - App name *(string)*
@@ -53,7 +53,7 @@ Either:
 
 ### options
 
-Type: `Object`
+Type: `object`
 
 #### size
 
@@ -63,13 +63,13 @@ Maximum: `1024`
 
 Size of the returned icon.
 
-### fileIcon.file(input, [options])
+### fileIcon.file(input, options?)
 
 Returns a `Promise` for when the file is written to `destination`.
 
 ### options
 
-Type: `Object`
+Type: `object`
 
 #### size
 
@@ -91,8 +91,3 @@ Output file for the icon.
 
 - [file-icon-cli](https://github.com/sindresorhus/file-icon-cli) - CLI for this module
 - [app-path](https://github.com/sindresorhus/app-path) - Get the path to an app
-
-
-## License
-
-MIT © [Sindre Sorhus](https://sindresorhus.com)

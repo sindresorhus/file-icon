@@ -15,7 +15,7 @@ func getIcon(input: String, size: Int) -> Data? {
 }
 
 func getIcon(pid: Int, size: Int) -> Data? {
-	return NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png()
+	NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png()
 }
 
 let input = CLI.arguments[0]

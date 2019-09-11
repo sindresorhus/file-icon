@@ -2,20 +2,16 @@ import Cocoa
 
 extension NSBitmapImageRep {
 	func png() -> Data? {
-		return representation(using: .png, properties: [:])
+		representation(using: .png, properties: [:])
 	}
 }
 
 extension Data {
-	var bitmap: NSBitmapImageRep? {
-		return NSBitmapImageRep(data: self)
-	}
+	var bitmap: NSBitmapImageRep? { NSBitmapImageRep(data: self) }
 }
 
 extension NSImage {
-	func png() -> Data? {
-		return tiffRepresentation?.bitmap?.png()
-	}
+	func png() -> Data? { tiffRepresentation?.bitmap?.png() }
 
 	func resizedForFile(to size: Int) -> NSImage {
 		let newSizeInt = size / Int(NSScreen.main?.backingScaleFactor ?? 1)
@@ -50,7 +46,7 @@ struct CLI {
 
 	static let arguments = Array(CommandLine.arguments.dropFirst(1))
 
-	/// Execute code and print to `stderr` and exit with code 1 if it throws
+	/// Execute code and print to `stderr` and exit with code 1 if it throws.
 	static func tryOrExit(_ throwingFunc: () throws -> Void) {
 		do {
 			try throwingFunc()
@@ -66,7 +62,7 @@ enum PrintOutputTarget {
 	case standardError
 }
 
-/// Make `print()` accept an array of items
+/// Make `print()` accept an array of items.
 /// Since Swift doesn't support spreading...
 private func print<Target>(
 	_ items: [Any],
