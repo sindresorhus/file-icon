@@ -6,6 +6,7 @@ const {execFile} = require('child_process');
 const execFileP = util.promisify(execFile);
 const bin = path.join(__dirname, 'file-icon');
 const HUNDRED_MEGABYTES = 1024 * 1024 * 100;
+const EOF_HEX = '3c454f463e'; // '<EOF>'
 
 const spawnOptions = {
 	encoding: null,
@@ -23,7 +24,15 @@ const validate = (file, options) => {
 	}
 
 	if (!file) {
-		throw new Error('Specify an app name, bundle identifier, or file path');
+		throw new Error('Specify one or an array of: app name, bundle identifier, file path, or pid');
+	}
+
+	if (typeof file !== 'string' && typeof file !== 'number' && !Array.isArray(file)) {
+		throw new TypeError(`Expected \`file\` be a string, number, or an array, got \`${typeof file}\``);
+	}
+
+	if (Array.isArray(file) && !file.every(f => typeof f === 'string' || typeof f === 'number')) {
+		throw new TypeError('Expected all members of `file` array to be of `string` or `number` type');
 	}
 
 	if (typeof options.size !== 'number') {
@@ -37,24 +46,45 @@ const validate = (file, options) => {
 	return options;
 };
 
+const toArray = input => Array.isArray(input) ? input : [input];
+
 exports.buffer = async (file, options) => {
 	options = validate(file, options);
 
-	const isPid = typeof file === 'number';
+	const files = toArray(file);
+	const isPid = files.map(file => (typeof file === 'number').toString());
 
-	const {stdout} = await execFileP(bin, [file, options.size, isPid], spawnOptions);
+	const {stdout} = await execFileP(bin, [files, options.size, isPid], spawnOptions);
 
-	return stdout;
+	const buffers = stdout
+		.toString('hex')
+		.split(EOF_HEX)
+		.filter(s => Boolean(s))
+		.map(hex => Buffer.from(hex, 'hex'));
+
+	return buffers.length === 1 && !Array.isArray(file) ?
+		buffers[0] :
+		buffers;
 };
 
 exports.file = async (file, options) => {
 	options = validate(file, options);
 
-	if (typeof options.destination !== 'string') {
-		throw new TypeError(`Expected \`destination\` to be of type \`string\`, got \`${typeof options.destination}\``);
+	const isArray = Array.isArray(file);
+
+	if (typeof file === 'string' && typeof options.destination !== 'string') {
+		throw new TypeError(`Expected \`options.destination\` to be of type \`string\` when \`file\` is of type \`string\`, got \`${typeof options.destination}\``);
+	} else if (isArray && !Array.isArray(options.destination)) {
+		throw new TypeError(`Expected \`options.destination\` to be of type \`array\` when \`file\` is of type \`array\`, got \`${typeof options.destination}\``);
+	} else if (isArray && file.length !== options.destination.length) {
+		throw new TypeError('Expected `file` and `options.destination` arrays to be of the same length');
 	}
 
-	const isPid = typeof file === 'number';
+	const files = toArray(file);
+	const isPid = files.map(file => (typeof file === 'number').toString());
+	const destination = isArray ?
+		options.destination.join(',') :
+		options.destination;
 
-	await execFileP(bin, [file, options.size, isPid, options.destination], spawnOptions);
+	await execFileP(bin, [files, options.size, isPid, destination], spawnOptions);
 };

@@ -18,27 +18,34 @@ func getIcon(pid: Int, size: Int) -> Data? {
 	NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png()
 }
 
-let input = CLI.arguments[0]
+let apps = CLI.arguments[0].components(separatedBy: ",")
 let size = Int(CLI.arguments[1])!
-let isPid = CLI.arguments[2] == "true"
+let isPid = CLI.arguments[2].components(separatedBy: ",")
+let writeToFile = CLI.arguments.count >= 4
+let destinations = writeToFile ?
+	CLI.arguments[3].components(separatedBy: ",") :
+	[];
 
-guard let icon: Data = {
-	if isPid {
-		return getIcon(pid: Int(input)!, size: size)
-	} else {
-		return getIcon(input: input, size: size)
+for (i, app) in apps.enumerated() {
+	guard let icon: Data = {
+		if isPid[i] == "true" {
+			return getIcon(pid: Int(app)!, size: size)
+		} else {
+			return getIcon(input: app, size: size)
+		}
+	}() else {
+		print("Couldn't find: \(app)", to: .standardError)
+		exit(1)
 	}
-}() else {
-	print("Couldn't find: \(input)", to: .standardError)
-	exit(1)
-}
 
-if CLI.arguments.count >= 4 {
-	let destination = CLI.arguments[3]
-	
-	CLI.tryOrExit {
-		try icon.write(to: URL(fileURLWithPath: destination), options: .atomic)
+	if writeToFile {
+		CLI.tryOrExit {
+			try icon.write(to: URL(fileURLWithPath: destinations[i]), options: .atomic)
+		}
+	}
+
+	CLI.standardOutput.write(icon)
+	if (apps.count > 1) {
+		CLI.standardOutput.write("<EOF>")
 	}
 }
-
-CLI.standardOutput.write(icon)

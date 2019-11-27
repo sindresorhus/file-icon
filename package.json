@@ -41,7 +41,7 @@
 		"id"
 	],
 	"devDependencies": {
-		"ava": "^0.25.0",
+		"ava": "^2.4.0",
 		"execa": "^1.0.0",
 		"file-type": "^9.0.0",
 		"tempy": "^0.2.1",
