@@ -6,7 +6,7 @@ const {execFile} = require('child_process');
 const execFileP = util.promisify(execFile);
 const bin = path.join(__dirname, 'file-icon');
 const HUNDRED_MEGABYTES = 1024 * 1024 * 100;
-const EOF_HEX = '3c454f463e'; // '<EOF>'
+const EOF = '<EOF>';
 
 const spawnOptions = {
 	encoding: null,
@@ -48,19 +48,35 @@ const validate = (file, options) => {
 
 const toArray = input => Array.isArray(input) ? input : [input];
 
+const toCLIArg = (file, {size, destination}) => {
+	const toBuffer = f => ({application: f.toString(), size});
+	const toFile = (f, i) => ({...toBuffer(f), destination: toArray(destination)[i]});
+
+	const arg = toArray(file).map(destination ? toFile : toBuffer);
+
+	return JSON.stringify(arg);
+};
+
+const splitBuffer = (buffer, delim) => {
+	const buffers = [];
+	const offset = Buffer.from(delim).length;
+	let copy = Buffer.from(buffer);
+	let search = copy.indexOf(delim);
+
+	while ((search = copy.indexOf(delim)) > -1) {
+		buffers.push(copy.subarray(0, search + offset));
+		copy = copy.subarray(search + offset, copy.length);
+	}
+
+	return buffers.length === 0 ? [buffer] : buffers;
+};
+
 exports.buffer = async (file, options) => {
 	options = validate(file, options);
 
-	const files = toArray(file);
-	const isPid = files.map(file => (typeof file === 'number').toString());
+	const {stdout} = await execFileP(bin, [toCLIArg(file, options)], spawnOptions);
 
-	const {stdout} = await execFileP(bin, [files, options.size, isPid], spawnOptions);
-
-	const buffers = stdout
-		.toString('hex')
-		.split(EOF_HEX)
-		.filter(s => Boolean(s))
-		.map(hex => Buffer.from(hex, 'hex'));
+	const buffers = splitBuffer(stdout, EOF);
 
 	return buffers.length === 1 && !Array.isArray(file) ?
 		buffers[0] :
@@ -80,11 +96,5 @@ exports.file = async (file, options) => {
 		throw new TypeError('Expected `file` and `options.destination` arrays to be of the same length');
 	}
 
-	const files = toArray(file);
-	const isPid = files.map(file => (typeof file === 'number').toString());
-	const destination = isArray ?
-		options.destination.join(',') :
-		options.destination;
-
-	await execFileP(bin, [files, options.size, isPid, destination], spawnOptions);
+	await execFileP(bin, [toCLIArg(file, options)], spawnOptions);
 };

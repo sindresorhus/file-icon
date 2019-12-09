@@ -18,34 +18,44 @@ func getIcon(pid: Int, size: Int) -> Data? {
 	NSRunningApplication(processIdentifier: pid_t(pid))?.icon?.resizedForFile(to: size).png()
 }
 
-let apps = CLI.arguments[0].components(separatedBy: ",")
-let size = Int(CLI.arguments[1])!
-let isPid = CLI.arguments[2].components(separatedBy: ",")
-let writeToFile = CLI.arguments.count >= 4
-let destinations = writeToFile ?
-	CLI.arguments[3].components(separatedBy: ",") :
-	[];
+struct Input: Codable {
+	let application: String
+	let size: Int
+	let destination: String?
+}
 
-for (i, app) in apps.enumerated() {
+let decoder = JSONDecoder()
+let data = Data(CLI.arguments[0].utf8)
+
+var inputs: [Input] = []
+do {
+	inputs = try decoder.decode([Input].self, from: data)
+} catch {
+	print("Invalid input", to: .standardError)
+	exit(1)
+}
+
+for input in inputs {
 	guard let icon: Data = {
-		if isPid[i] == "true" {
-			return getIcon(pid: Int(app)!, size: size)
+		if input.application.isInt {
+			return getIcon(pid: Int(input.application)!, size: input.size)
 		} else {
-			return getIcon(input: app, size: size)
+			return getIcon(input: input.application, size: input.size)
 		}
 	}() else {
-		print("Couldn't find: \(app)", to: .standardError)
+		print("Couldn't find: \(input.application)", to: .standardError)
 		exit(1)
 	}
 
-	if writeToFile {
+	// assumes that input.destination is set for all or none of the inputs
+	if input.destination != nil {
 		CLI.tryOrExit {
-			try icon.write(to: URL(fileURLWithPath: destinations[i]), options: .atomic)
+			try icon.write(to: URL(fileURLWithPath: input.destination!), options: .atomic)
 		}
-	}
-
-	CLI.standardOutput.write(icon)
-	if (apps.count > 1) {
-		CLI.standardOutput.write("<EOF>")
+	} else {
+		CLI.standardOutput.write(icon)
+		if inputs.count > 1 {
+			CLI.standardOutput.write("<EOF>")
+		}
 	}
 }

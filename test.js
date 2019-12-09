@@ -5,38 +5,38 @@ import tempy from 'tempy';
 import execa from 'execa';
 import fileIcon from '.';
 
-const processId = async app => {
+const processID = async app => {
 	const {stdout} = await execa('pgrep', [app]);
 	return parseInt(stdout.split('\n')[0], 10);
 };
 
-const tmpFile = () => tempy.file({extension: 'png'});
+const tempFile = () => tempy.file({extension: 'png'});
 
 test('argument validation', async t => {
-	const finderPid = await processId('Finder');
+	const finderPID = await processID('Finder');
 
-	await t.notThrowsAsync(() => fileIcon.buffer('Safari'));
-	await t.notThrowsAsync(() => fileIcon.buffer(finderPid));
-	await t.notThrowsAsync(() => fileIcon.buffer(['Safari', 'Finder']));
-	await t.notThrowsAsync(() => fileIcon.buffer(['Safari', finderPid]));
+	await t.notThrowsAsync(fileIcon.buffer('Safari'));
+	await t.notThrowsAsync(fileIcon.buffer(finderPID));
+	await t.notThrowsAsync(fileIcon.buffer(['Safari', 'Finder']));
+	await t.notThrowsAsync(fileIcon.buffer(['Safari', finderPID]));
 
-	await t.throwsAsync(() => fileIcon.buffer({}), TypeError);
-	await t.throwsAsync(() => fileIcon.buffer([{}]), TypeError);
-	await t.throwsAsync(() => fileIcon.buffer(['Safari', {}]), TypeError);
+	await t.throwsAsync(fileIcon.buffer({}), TypeError);
+	await t.throwsAsync(fileIcon.buffer([{}]), TypeError);
+	await t.throwsAsync(fileIcon.buffer(['Safari', {}]), TypeError);
 
-	await t.notThrowsAsync(() => fileIcon.file('Safari', {destination: tmpFile()}));
-	await t.notThrowsAsync(() => fileIcon.file(finderPid, {destination: tmpFile()}));
-	await t.notThrowsAsync(() => fileIcon.file(['Safari', 'Finder'], {destination: [tmpFile(), tmpFile()]}));
-	await t.notThrowsAsync(() => fileIcon.file(['Safari', finderPid], {destination: [tmpFile(), tmpFile()]}));
+	await t.notThrowsAsync(fileIcon.file('Safari', {destination: tempFile()}));
+	await t.notThrowsAsync(fileIcon.file(finderPID, {destination: tempFile()}));
+	await t.notThrowsAsync(fileIcon.file(['Safari', 'Finder'], {destination: [tempFile(), tempFile()]}));
+	await t.notThrowsAsync(fileIcon.file(['Safari', finderPID], {destination: [tempFile(), tempFile()]}));
 
-	await t.throwsAsync(() => fileIcon.file(['Safari']), TypeError);
-	await t.throwsAsync(() => fileIcon.file(['Safari'], {destination: tmpFile()}), TypeError);
-	await t.throwsAsync(() => fileIcon.file(['Safari', 'Finder'], {destination: [tmpFile()]}), TypeError);
-	await t.throwsAsync(() => fileIcon.file(['Safari', 'Finder'], {destination: [tmpFile(), tmpFile(), tmpFile()]}), TypeError);
+	await t.throwsAsync(fileIcon.file(['Safari']), TypeError);
+	await t.throwsAsync(fileIcon.file(['Safari'], {destination: tempFile()}), TypeError);
+	await t.throwsAsync(fileIcon.file(['Safari', 'Finder'], {destination: [tempFile()]}), TypeError);
+	await t.throwsAsync(fileIcon.file(['Safari', 'Finder'], {destination: [tempFile(), tempFile(), tempFile()]}), TypeError);
 
-	await t.throwsAsync(() => fileIcon.file({}, {destination: tmpFile()}), TypeError);
-	await t.throwsAsync(() => fileIcon.file([{}], {destination: [tmpFile()]}), TypeError);
-	await t.throwsAsync(() => fileIcon.file(['Safari', {}], {destination: [tmpFile(), tmpFile()]}), TypeError);
+	await t.throwsAsync(fileIcon.file({}, {destination: tempFile()}), TypeError);
+	await t.throwsAsync(fileIcon.file([{}], {destination: [tempFile()]}), TypeError);
+	await t.throwsAsync(fileIcon.file(['Safari', {}], {destination: [tempFile(), tempFile()]}), TypeError);
 });
 
 test('app name', async t => {
@@ -47,6 +47,7 @@ test('array of single app name', async t => {
 	const apps = ['Finder'];
 	const buffers = await fileIcon.buffer(apps);
 
+	t.is(buffers.length, 1);
 	t.is(fileType(buffers[0]).ext, 'png');
 });
 
@@ -54,59 +55,65 @@ test('array of multiple app names', async t => {
 	const apps = ['Finder', 'Safari'];
 	const buffers = await fileIcon.buffer(apps);
 
+	t.is(buffers.length, 2);
 	t.is(fileType(buffers[0]).ext, 'png');
 	t.is(fileType(buffers[1]).ext, 'png');
 });
 
-test('app bundle id', async t => {
+test('app bundle ID', async t => {
 	t.is(fileType(await fileIcon.buffer('com.apple.Safari')).ext, 'png');
 });
 
-test('array of single app bundle id', async t => {
+test('array of single app bundle ID', async t => {
 	const apps = ['com.apple.Finder'];
 	const buffers = await fileIcon.buffer(apps);
 
+	t.is(buffers.length, 1);
 	t.is(fileType(buffers[0]).ext, 'png');
 });
 
-test('array of multiple app bundle ids', async t => {
+test('array of multiple app bundle IDs', async t => {
 	const ids = ['com.apple.Finder', 'com.apple.Safari'];
 	const buffers = await fileIcon.buffer(ids);
 
+	t.is(buffers.length, 2);
 	t.is(fileType(buffers[0]).ext, 'png');
 	t.is(fileType(buffers[1]).ext, 'png');
 });
 
-test('app process id', async t => {
-	const finderPid = await processId('Finder');
+test('app process ID', async t => {
+	const finderPID = await processID('Finder');
 
-	t.is(fileType(await fileIcon.buffer(finderPid)).ext, 'png');
+	t.is(fileType(await fileIcon.buffer(finderPID)).ext, 'png');
 });
 
-test('array of single app process id', async t => {
-	const finderPid = await processId('Finder');
+test('array of single app process ID', async t => {
+	const finderPID = await processID('Finder');
 
-	const pids = [finderPid];
+	const pids = [finderPID];
 	const buffers = await fileIcon.buffer(pids);
 
+	t.is(buffers.length, 1);
 	t.is(fileType(buffers[0]).ext, 'png');
 });
 
-test('array of multiple app process ids', async t => {
+test('array of multiple app process IDs', async t => {
 	const apps = ['Finder', 'loginwindow'];
-	const pids = await Promise.all(apps.map(processId));
+	const pids = await Promise.all(apps.map(processID));
 	const buffers = await fileIcon.buffer(pids);
 
+	t.is(buffers.length, 2);
 	t.is(fileType(buffers[0]).ext, 'png');
 	t.is(fileType(buffers[1]).ext, 'png');
 });
 
 test('array of mixed types', async t => {
-	const loginwindowPid = await processId('loginwindow');
+	const loginwindowPID = await processID('loginwindow');
 
-	const apps = ['com.apple.Finder', loginwindowPid, 'Safari'];
+	const apps = ['com.apple.Finder', loginwindowPID, 'Safari'];
 	const buffers = await fileIcon.buffer(apps);
 
+	t.is(buffers.length, 3);
 	t.is(fileType(buffers[0]).ext, 'png');
 	t.is(fileType(buffers[1]).ext, 'png');
 	t.is(fileType(buffers[2]).ext, 'png');
@@ -117,89 +124,96 @@ test('file path', async t => {
 });
 
 test('write file single app name', async t => {
-	const destination = tmpFile();
+	const destination = tempFile();
 	await fileIcon.file('Safari', {destination});
 	const icon = fs.readFileSync(destination);
 	t.is(fileType(icon).ext, 'png');
 });
 
 test('write file array of single app name', async t => {
-	const destination = [tmpFile()];
+	const destination = [tempFile()];
 
 	await fileIcon.file(['Safari'], {destination});
 
+	t.is(destination.length, 1);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 });
 
 test('write files array of app names', async t => {
-	const destination = [tmpFile(), tmpFile()];
+	const destination = [tempFile(), tempFile()];
 
 	await fileIcon.file(['Safari', 'Finder'], {destination});
 
+	t.is(destination.length, 2);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 	t.is(fileType(fs.readFileSync(destination[1])).ext, 'png');
 });
 
-test('write file single app bundle id', async t => {
-	const destination = tmpFile();
+test('write file single app bundle ID', async t => {
+	const destination = tempFile();
 	await fileIcon.file('com.apple.Safari', {destination});
 	const icon = fs.readFileSync(destination);
 	t.is(fileType(icon).ext, 'png');
 });
 
-test('write file array of single app bundle id', async t => {
-	const destination = [tmpFile()];
+test('write file array of single app bundle ID', async t => {
+	const destination = [tempFile()];
 
 	await fileIcon.file(['com.apple.Safari'], {destination});
 
+	t.is(destination.length, 1);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 });
 
-test('write files array of app bundle ids', async t => {
-	const destination = [tmpFile(), tmpFile()];
+test('write files array of app bundle IDs', async t => {
+	const destination = [tempFile(), tempFile()];
 
 	await fileIcon.file(['com.apple.Safari', 'com.apple.Finder'], {destination});
 
+	t.is(destination.length, 2);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 	t.is(fileType(fs.readFileSync(destination[1])).ext, 'png');
 });
 
-test('write file single app process id', async t => {
-	const destination = tmpFile();
-	const pid = await processId('Finder');
+test('write file single app process ID', async t => {
+	const destination = tempFile();
+	const pid = await processID('Finder');
 	await fileIcon.file(pid, {destination});
 	const icon = fs.readFileSync(destination);
 
 	t.is(fileType(icon).ext, 'png');
 });
 
-test('write file array of single app process id', async t => {
+test('write file array of single app process ID', async t => {
 	const apps = ['Finder'];
-	const destination = [tmpFile()];
-	const pids = await Promise.all(apps.map(processId));
+	const destination = [tempFile()];
+	const pids = await Promise.all(apps.map(processID));
 
 	await fileIcon.file(pids, {destination});
 
+	t.is(destination.length, 1);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 });
 
-test('write files array of app process ids', async t => {
+test('write files array of app process IDs', async t => {
 	const apps = ['Finder', 'loginwindow'];
-	const destination = [tmpFile(), tmpFile()];
-	const pids = await Promise.all(apps.map(processId));
+	const destination = [tempFile(), tempFile()];
+	const pids = await Promise.all(apps.map(processID));
 
 	await fileIcon.file(pids, {destination});
 
+	t.is(destination.length, 2);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 	t.is(fileType(fs.readFileSync(destination[1])).ext, 'png');
 });
 
 test('write files array of mixed types', async t => {
-	const loginwindowPid = await processId('loginwindow');
-	const apps = ['com.apple.Finder', loginwindowPid, 'Safari'];
-	const destination = [tmpFile(), tmpFile(), tmpFile()];
+	const loginwindowPID = await processID('loginwindow');
+	const apps = ['com.apple.Finder', loginwindowPID, 'Safari'];
+	const destination = [tempFile(), tempFile(), tempFile()];
 	await fileIcon.file(apps, {destination});
 
+	t.is(destination.length, 3);
 	t.is(fileType(fs.readFileSync(destination[0])).ext, 'png');
 	t.is(fileType(fs.readFileSync(destination[1])).ext, 'png');
 	t.is(fileType(fs.readFileSync(destination[2])).ext, 'png');

@@ -67,13 +67,14 @@ const fileIcon = require('file-icon');
 })();
 ```
 
+
 ## API
 
 ### fileIcon.buffer(input, options?)
 
 Returns a `Promise<Buffer>` for a PNG image if `input` is of type `string` or `number`.
 
-Returns a `Promise<Array<Buffer>>` for multiple PNG images if `input` is of type `Array<string | number>`.
+Returns a `Promise<Buffer[]>` for multiple PNG images if `input` is of type `Array<string | number>`.
 
 ### input
 
@@ -123,9 +124,7 @@ Size of the returned icon.
 *Required*<br>
 Type: `string | Array<string>`
 
-Output file for the icon. If `input` is a single value, `options.destination`
-*must* be of type `string`.  If `input` is an `Array`, `options.destination`
-*must* be of type `Array<string>` with the same `length` as `input`.
+Output file for the icon. If `input` is a single value, `options.destination` *must* be of type `string`.  If `input` is an `Array`, `options.destination` *must* be of type `Array<string>` with the same `length` as `input`.
 
 ## Related
 
