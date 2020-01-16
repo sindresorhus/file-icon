@@ -19,7 +19,7 @@ func getIcon(pid: Int, size: Int) -> Data? {
 }
 
 struct Input: Codable {
-	let application: String
+	let appOrPID: String
 	let size: Int
 	let destination: String?
 }
@@ -27,30 +27,27 @@ struct Input: Codable {
 let decoder = JSONDecoder()
 let data = Data(CLI.arguments[0].utf8)
 
-var inputs: [Input] = []
-do {
+var inputs = [Input]();
+CLI.tryOrExit {
 	inputs = try decoder.decode([Input].self, from: data)
-} catch {
-	print("Invalid input", to: .standardError)
-	exit(1)
 }
 
 for input in inputs {
 	guard let icon: Data = {
-		if input.application.isInt {
-			return getIcon(pid: Int(input.application)!, size: input.size)
+    if let pid = Int(input.appOrPID) {
+			return getIcon(pid: pid, size: input.size)
 		} else {
-			return getIcon(input: input.application, size: input.size)
+			return getIcon(input: input.appOrPID, size: input.size)
 		}
 	}() else {
-		print("Couldn't find: \(input.application)", to: .standardError)
+		print("Couldn't find: \(input.appOrPID)", to: .standardError)
 		exit(1)
 	}
 
 	// assumes that input.destination is set for all or none of the inputs
-	if input.destination != nil {
+	if let destination = input.destination {
 		CLI.tryOrExit {
-			try icon.write(to: URL(fileURLWithPath: input.destination!), options: .atomic)
+			try icon.write(to: URL(fileURLWithPath: destination), options: .atomic)
 		}
 	} else {
 		CLI.standardOutput.write(icon)

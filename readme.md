@@ -24,7 +24,7 @@ const fileIcon = require('file-icon');
 	// An array of app names
 	const apps = ['Finder', 'Safari'];
 	const buffers = await fileIcon.buffer(apps);
-	buffers.map((buffer, i) => fs.writeFileSync(`${apps[i]}-icon.png`, buffer));
+	buffers.map((buffer, index) => fs.writeFileSync(`${apps[index]}-icon.png`, buffer));
 
 	// Or a bundle ID
 	const buffer2 = await fileIcon.buffer('com.apple.Safari', {size: 64});
@@ -33,7 +33,7 @@ const fileIcon = require('file-icon');
 	// Or a an array of bundle IDs
 	const bundleIds = ['com.apple.Finder', 'com.apple.Safari'];
 	const buffers2 = await fileIcon.buffer(bundleIds);
-	buffers2.map((buffer, i) => fs.writeFileSync(`${bundleIds[i]}-icon.png`, buffer));
+	buffers2.map((buffer, index) => fs.writeFileSync(`${bundleIds[index]}-icon.png`, buffer));
 
 	// Or a process ID
 	const buffer3 = await fileIcon.buffer(257);
@@ -42,7 +42,7 @@ const fileIcon = require('file-icon');
 	// Or an array of process IDs
 	const pids = [257, 16];
 	const buffers3 = await fileIcon.buffer(pids, {size: 128});
-	buffers3.map((buffer, i) => fs.writeFileSync(`${pids[i]}-icon.png`, buffer));
+	buffers3.map((buffer, index) => fs.writeFileSync(`${pids[index]}-icon.png`, buffer));
 
 	// Or a path to an app / file
 	const buffer4 = await fileIcon.buffer('/Applications/Safari.app');
@@ -51,7 +51,7 @@ const fileIcon = require('file-icon');
 	// Or an array of filenames
 	const paths = ['/Applications/Safari.app', '/Applications/Calculator.app'];
 	const buffers4 = await fileIcon.buffer(paths);
-	buffers4.map((buffer, i) => fs.writeFileSync(`${paths[i].split(/\/|\./)[2]}-icon.png`, buffer));
+	buffers4.map((buffer, index) => fs.writeFileSync(`${paths[index].split(/\/|\./)[2]}-icon.png`, buffer));
 	fs.writeFileSync('jpeg-file-type-icon.png', buffer4);
 
 	// Or a mix of all of them!
@@ -122,9 +122,9 @@ Size of the returned icon.
 #### destination
 
 *Required*<br>
-Type: `string | Array<string>`
+Type: `string | string[]`
 
-Output file for the icon. If `input` is a single value, `options.destination` *must* be of type `string`.  If `input` is an `Array`, `options.destination` *must* be of type `Array<string>` with the same `length` as `input`.
+Output file for the icon. If `input` is a single value, `options.destination` *must* be of type `string`.  If `input` is an `Array`, `options.destination` *must* be of type `string[]` with the same `length` as `input`.
 
 ## Related
 

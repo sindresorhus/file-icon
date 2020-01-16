@@ -48,22 +48,22 @@ const validate = (file, options) => {
 
 const toArray = input => Array.isArray(input) ? input : [input];
 
-const toCLIArg = (file, {size, destination}) => {
-	const toBuffer = f => ({application: f.toString(), size});
-	const toFile = (f, i) => ({...toBuffer(f), destination: toArray(destination)[i]});
+const toCLIArgument = (file, {size, destination}) => {
+	const toBuffer = file => ({appOrPID: file.toString(), size});
+	const toFile = (file, index) => ({...toBuffer(file), destination: toArray(destination)[index]});
 
-	const arg = toArray(file).map(destination ? toFile : toBuffer);
+	const argument_ = toArray(file).map(destination ? toFile : toBuffer);
 
-	return JSON.stringify(arg);
+	return JSON.stringify(argument_);
 };
 
-const splitBuffer = (buffer, delim) => {
+const splitBuffer = (buffer, delimiter) => {
 	const buffers = [];
-	const offset = Buffer.from(delim).length;
+	const offset = Buffer.from(delimiter).length;
 	let copy = Buffer.from(buffer);
-	let search = copy.indexOf(delim);
+	let search = copy.indexOf(delimiter);
 
-	while ((search = copy.indexOf(delim)) > -1) {
+	while ((search = copy.indexOf(delimiter)) > -1) {
 		buffers.push(copy.subarray(0, search + offset));
 		copy = copy.subarray(search + offset, copy.length);
 	}
@@ -74,7 +74,7 @@ const splitBuffer = (buffer, delim) => {
 exports.buffer = async (file, options) => {
 	options = validate(file, options);
 
-	const {stdout} = await execFileP(bin, [toCLIArg(file, options)], spawnOptions);
+	const {stdout} = await execFileP(bin, [toCLIArgument(file, options)], spawnOptions);
 
 	const buffers = splitBuffer(stdout, EOF);
 
@@ -96,5 +96,5 @@ exports.file = async (file, options) => {
 		throw new TypeError('Expected `file` and `options.destination` arrays to be of the same length');
 	}
 
-	await execFileP(bin, [toCLIArg(file, options)], spawnOptions);
+	await execFileP(bin, [toCLIArgument(file, options)], spawnOptions);
 };
