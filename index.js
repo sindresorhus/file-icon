@@ -2,11 +2,11 @@
 const path = require('path');
 const util = require('util');
 const {execFile} = require('child_process');
+const pMap = require('p-map');
 
 const execFileP = util.promisify(execFile);
 const bin = path.join(__dirname, 'file-icon');
 const HUNDRED_MEGABYTES = 1024 * 1024 * 100;
-const EOF = '<EOF>';
 
 const spawnOptions = {
 	encoding: null,
@@ -57,26 +57,17 @@ const toCLIArgument = (file, {size, destination}) => {
 	return JSON.stringify(argument_);
 };
 
-const splitBuffer = (buffer, delimiter) => {
-	const buffers = [];
-	const offset = Buffer.from(delimiter).length;
-	let copy = Buffer.from(buffer);
-	let search = copy.indexOf(delimiter);
-
-	while ((search = copy.indexOf(delimiter)) > -1) {
-		buffers.push(copy.subarray(0, search + offset));
-		copy = copy.subarray(search + offset, copy.length);
-	}
-
-	return buffers.length === 0 ? [buffer] : buffers;
-};
-
 exports.buffer = async (file, options) => {
 	options = validate(file, options);
 
-	const {stdout} = await execFileP(bin, [toCLIArgument(file, options)], spawnOptions);
+	const files = toArray(file);
 
-	const buffers = splitBuffer(stdout, EOF);
+	const mapper = async file => {
+		const {stdout} = await execFileP(bin, [toCLIArgument(file, options)], spawnOptions);
+		return stdout;
+	};
+
+	const buffers = await pMap(files, mapper, {concurrency: 8});
 
 	return buffers.length === 1 && !Array.isArray(file) ?
 		buffers[0] :
