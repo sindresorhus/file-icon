@@ -40,9 +40,7 @@ extension FileHandle: TextOutputStream {
 }
 
 extension String {
-	var isInt: Bool {
-		return Int(self) != nil
-	}
+	var isInt: Bool { Int(self) != nil }
 }
 
 struct CLI {
