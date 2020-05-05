@@ -34,7 +34,7 @@ CLI.tryOrExit {
 
 for input in inputs {
 	guard let icon: Data = {
-    if let pid = Int(input.appOrPID) {
+		if let pid = Int(input.appOrPID) {
 			return getIcon(pid: pid, size: input.size)
 		} else {
 			return getIcon(input: input.appOrPID, size: input.size)
@@ -44,13 +44,14 @@ for input in inputs {
 		exit(1)
 	}
 
-	// assumes that input.destination is set for all or none of the inputs
+	// Assumes that `input.destination` is set for all or none of the inputs.
 	if let destination = input.destination {
 		CLI.tryOrExit {
 			try icon.write(to: URL(fileURLWithPath: destination), options: .atomic)
 		}
 	} else {
 		CLI.standardOutput.write(icon)
+
 		if inputs.count > 1 {
 			CLI.standardOutput.write("<EOF>")
 		}
