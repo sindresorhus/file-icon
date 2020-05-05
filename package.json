@@ -4,17 +4,18 @@
 	"description": "Get the icon of a file or app as a PNG image (macOS)",
 	"license": "MIT",
 	"repository": "sindresorhus/file-icon",
+	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
-		"url": "sindresorhus.com"
+		"url": "https://sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=8"
+		"node": ">=10"
 	},
 	"scripts": {
 		"test": "xo && ava",
-		"build": "swift build --configuration=release --static-swift-stdlib && mv .build/release/file-icon .",
+		"build": "swift build --configuration=release && mv .build/release/file-icon .",
 		"prepublish": "npm run build"
 	},
 	"files": [
@@ -45,9 +46,9 @@
 	},
 	"devDependencies": {
 		"ava": "^2.4.0",
-		"execa": "^1.0.0",
-		"file-type": "^9.0.0",
-		"tempy": "^0.2.1",
-		"xo": "^0.23.0"
+		"execa": "^4.0.0",
+		"file-type": "^14.3.0",
+		"tempy": "^0.5.0",
+		"xo": "^0.30.0"
 	}
 }

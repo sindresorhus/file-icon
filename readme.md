@@ -1,14 +1,14 @@
-# file-icon [![Build Status](https://travis-ci.org/sindresorhus/file-icon.svg?branch=master)](https://travis-ci.org/sindresorhus/file-icon)
+# file-icon [![Build Status](https://travis-ci.com/sindresorhus/file-icon.svg?branch=master)](https://travis-ci.com/sindresorhus/file-icon)
 
-> Get the icon of a file or app as a PNG image *(macOS)*
+> Get the icon of a file or app as a PNG image
 
+Requires macOS 10.10 or later. macOS 10.13 or earlier needs to download the [Swift runtime support libraries](https://support.apple.com/kb/DL1998).
 
 ## Install
 
 ```
 $ npm install file-icon
 ```
-
 
 ## Usage
 
@@ -93,8 +93,8 @@ Type: `object`
 
 #### size
 
-Type: `number`<br>
-Default: `1024`<br>
+Type: `number`\
+Default: `1024`\
 Maximum: `1024`
 
 Size of the returned icon.
@@ -113,15 +113,15 @@ Type: `object`
 
 #### size
 
-Type: `number`<br>
-Default: `1024`<br>
+Type: `number`\
+Default: `1024`\
 Maximum: `1024`
 
 Size of the returned icon.
 
 #### destination
 
-*Required*<br>
+*Required*\
 Type: `string | string[]`
 
 Output file for the icon. If `input` is a single value, `options.destination` *must* be of type `string`.  If `input` is an `Array`, `options.destination` *must* be of type `string[]` with the same `length` as `input`.

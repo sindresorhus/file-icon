@@ -52,6 +52,7 @@ const toCLIArgument = (file, {size, destination}) => {
 	const toBuffer = file => ({appOrPID: file.toString(), size});
 	const toFile = (file, index) => ({...toBuffer(file), destination: toArray(destination)[index]});
 
+	// eslint-disable-next-line unicorn/no-fn-reference-in-iterator
 	const argument_ = toArray(file).map(destination ? toFile : toBuffer);
 
 	return JSON.stringify(argument_);
