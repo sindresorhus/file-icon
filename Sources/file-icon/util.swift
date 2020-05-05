@@ -39,6 +39,10 @@ extension FileHandle: TextOutputStream {
 	}
 }
 
+extension String {
+	var isInt: Bool { Int(self) != nil }
+}
+
 struct CLI {
 	static var standardInput = FileHandle.standardInput
 	static var standardOutput = FileHandle.standardOutput

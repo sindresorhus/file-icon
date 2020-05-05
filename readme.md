@@ -17,18 +17,52 @@ const fs = require('fs');
 const fileIcon = require('file-icon');
 
 (async () => {
-	const buffer = await fileIcon.buffer('Safari')
+	// An app name can be used
+	const buffer = await fileIcon.buffer('Safari');
 	fs.writeFileSync('safari-icon.png', buffer);
 
-	// Or by bundle ID
+	// An array of app names
+	const apps = ['Finder', 'Safari'];
+	const buffers = await fileIcon.buffer(apps);
+	buffers.map((buffer, index) => fs.writeFileSync(`${apps[index]}-icon.png`, buffer));
+
+	// Or a bundle ID
 	const buffer2 = await fileIcon.buffer('com.apple.Safari', {size: 64});
 	fs.writeFileSync('safari-icon.png', buffer2);
 
-	// Or by filename
-	const buffer3 = await fileIcon.buffer('unicorn.jpg');
-	fs.writeFileSync('jpeg-file-type-icon.png', buffer3);
+	// Or a an array of bundle IDs
+	const bundleIds = ['com.apple.Finder', 'com.apple.Safari'];
+	const buffers2 = await fileIcon.buffer(bundleIds);
+	buffers2.map((buffer, index) => fs.writeFileSync(`${bundleIds[index]}-icon.png`, buffer));
 
+	// Or a process ID
+	const buffer3 = await fileIcon.buffer(257);
+	fs.writeFileSync('pid.png', buffer3);
+
+	// Or an array of process IDs
+	const pids = [257, 16];
+	const buffers3 = await fileIcon.buffer(pids, {size: 128});
+	buffers3.map((buffer, index) => fs.writeFileSync(`${pids[index]}-icon.png`, buffer));
+
+	// Or a path to an app / file
+	const buffer4 = await fileIcon.buffer('/Applications/Safari.app');
+	fs.writeFileSync('safari-icon.png', buffer4);
+
+	// Or an array of filenames
+	const paths = ['/Applications/Safari.app', '/Applications/Calculator.app'];
+	const buffers4 = await fileIcon.buffer(paths);
+	buffers4.map((buffer, index) => fs.writeFileSync(`${paths[index].split(/\/|\./)[2]}-icon.png`, buffer));
+	fs.writeFileSync('jpeg-file-type-icon.png', buffer4);
+
+	// Or a mix of all of them!
+	await fileIcon.buffer(['Finder', 257, 'com.apple.Calculator', '/Applications/Safari.app']);
+
+	// You can also use `fileIcon.file` and provide `options.destination` with the path to write to
 	await fileIcon.file('Safari', {destination: 'safari-icon.png'});
+
+	// You can also use same length arrays for `input` and `options.destination`
+	await fileIcon.file(['Safari', 'Finder'], {destination: ['safari-icon.png', 'finder-icon.png']});
+
 	console.log('Done');
 })();
 ```
@@ -38,11 +72,13 @@ const fileIcon = require('file-icon');
 
 ### fileIcon.buffer(input, options?)
 
-Returns a `Promise<Buffer>` for a PNG image.
+Returns a `Promise<Buffer>` for a PNG image if `input` is of type `string` or `number`.
+
+Returns a `Promise<Buffer[]>` for multiple PNG images if `input` is of type `Array<string | number>`.
 
 ### input
 
-Type: `string | number`
+Type: `string | number | Array<string | number>`
 
 Either:
 - App name *(string)*
@@ -65,7 +101,11 @@ Size of the returned icon.
 
 ### fileIcon.file(input, options?)
 
-Returns a `Promise` for when the file is written to `destination`.
+Returns a `Promise` that resolves when the files are written to `options.destination`.
+
+### input
+
+Type: `string | number | Array<string | number>`
 
 ### options
 
@@ -82,10 +122,9 @@ Size of the returned icon.
 #### destination
 
 *Required*<br>
-Type: `string`
+Type: `string | string[]`
 
-Output file for the icon.
-
+Output file for the icon. If `input` is a single value, `options.destination` *must* be of type `string`.  If `input` is an `Array`, `options.destination` *must* be of type `string[]` with the same `length` as `input`.
 
 ## Related
 
