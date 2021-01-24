@@ -47,7 +47,7 @@ for input in inputs {
 	// Assumes that `input.destination` is set for all or none of the inputs.
 	if let destination = input.destination {
 		CLI.tryOrExit {
-			try icon.write(to: URL(fileURLWithPath: destination), options: .atomic)
+			try icon.write(to: URL(fileURLWithPath: destination, isDirectory: false), options: .atomic)
 		}
 	} else {
 		CLI.standardOutput.write(icon)
