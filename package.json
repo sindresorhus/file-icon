@@ -14,12 +14,13 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"test": "xo && ava",
+		"test": "xo && ava & tsd",
 		"build": "swift build --configuration=release && mv .build/release/file-icon .",
 		"prepare": "npm run build"
 	},
 	"files": [
 		"index.js",
+		"index.d.ts",
 		"file-icon"
 	],
 	"keywords": [
@@ -45,10 +46,12 @@
 		"p-map": "^4.0.0"
 	},
 	"devDependencies": {
+		"@types/node": "^14.14.25",
 		"ava": "^2.4.0",
 		"execa": "^4.0.0",
 		"file-type": "^14.3.0",
 		"tempy": "^0.5.0",
+		"tsd": "^0.14.0",
 		"xo": "^0.38.1"
 	}
 }
