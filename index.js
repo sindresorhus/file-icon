@@ -1,22 +1,25 @@
-'use strict';
-const path = require('path');
-const util = require('util');
-const {execFile} = require('child_process');
-const pMap = require('p-map');
+import process from 'node:process';
+import path from 'node:path';
+import {promisify} from 'node:util';
+import {fileURLToPath} from 'node:url';
+import {execFile} from 'node:child_process';
+import pMap from 'p-map';
 
-const execFileP = util.promisify(execFile);
-const bin = path.join(__dirname, 'file-icon');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const execFileP = promisify(execFile);
+const binary = path.join(__dirname, 'file-icon');
 const HUNDRED_MEGABYTES = 1024 * 1024 * 100;
 
 const spawnOptions = {
 	encoding: null,
-	maxBuffer: HUNDRED_MEGABYTES
+	maxBuffer: HUNDRED_MEGABYTES,
 };
 
 const validate = (file, options) => {
 	options = {
 		size: 1024,
-		...options
+		...options,
 	};
 
 	if (process.platform !== 'darwin') {
@@ -52,30 +55,30 @@ const toCLIArgument = (file, {size, destination}) => {
 	const toBuffer = file => ({appOrPID: file.toString(), size});
 	const toFile = (file, index) => ({...toBuffer(file), destination: toArray(destination)[index]});
 
-	// eslint-disable-next-line unicorn/no-fn-reference-in-iterator
+	// eslint-disable-next-line unicorn/no-array-callback-reference
 	const argument_ = toArray(file).map(destination ? toFile : toBuffer);
 
 	return JSON.stringify(argument_);
 };
 
-exports.buffer = async (file, options) => {
+export async function fileIconToBuffer(file, options) {
 	options = validate(file, options);
 
 	const files = toArray(file);
 
 	const mapper = async file => {
-		const {stdout} = await execFileP(bin, [toCLIArgument(file, options)], spawnOptions);
+		const {stdout} = await execFileP(binary, [toCLIArgument(file, options)], spawnOptions);
 		return stdout;
 	};
 
 	const buffers = await pMap(files, mapper, {concurrency: 8});
 
-	return buffers.length === 1 && !Array.isArray(file) ?
-		buffers[0] :
-		buffers;
-};
+	return buffers.length === 1 && !Array.isArray(file)
+		? buffers[0]
+		: buffers;
+}
 
-exports.file = async (file, options) => {
+export async function fileIconToFile(file, options) {
 	options = validate(file, options);
 
 	const isArray = Array.isArray(file);
@@ -88,5 +91,5 @@ exports.file = async (file, options) => {
 		throw new TypeError('Expected `file` and `options.destination` arrays to be of the same length');
 	}
 
-	await execFileP(bin, [toCLIArgument(file, options)], spawnOptions);
-};
+	await execFileP(binary, [toCLIArgument(file, options)], spawnOptions);
+}
