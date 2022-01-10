@@ -17,7 +17,7 @@
 	},
 	"scripts": {
 		"test": "xo && ava",
-		"build": "swift build --configuration=release && mv .build/release/file-icon .",
+		"build": "swift build --configuration=release --arch arm64 --arch x86_64 && mv .build/apple/Products/Release/file-icon .",
 		"prepare": "npm run build"
 	},
 	"files": [
@@ -44,13 +44,13 @@
 		"id"
 	],
 	"dependencies": {
-		"p-map": "^5.1.0"
+		"p-map": "^5.3.0"
 	},
 	"devDependencies": {
-		"ava": "^3.15.0",
-		"execa": "^5.1.1",
-		"file-type": "^16.5.3",
+		"ava": "^4.0.1",
+		"execa": "^6.0.0",
+		"file-type": "^17.1.1",
 		"tempy": "^2.0.0",
-		"xo": "^0.44.0"
+		"xo": "^0.47.0"
 	}
 }

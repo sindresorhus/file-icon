@@ -6,8 +6,8 @@ Requires macOS 10.10 or later. macOS 10.13 or earlier needs to download the [Swi
 
 ## Install
 
-```
-$ npm install file-icon
+```sh
+npm install file-icon
 ```
 
 ## Usage

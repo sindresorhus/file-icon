@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import test from 'ava';
-import FileType from 'file-type';
+import {fileTypeFromBuffer} from 'file-type';
 import tempy from 'tempy';
-import execa from 'execa';
+import {execa} from 'execa';
 import {fileIconToBuffer, fileIconToFile} from './index.js';
 
 const processID = async app => {
@@ -40,15 +40,18 @@ test('argument validation', async t => {
 });
 
 test('app name', async t => {
-	t.is((await FileType.fromBuffer(await fileIconToBuffer('Safari'))).ext, 'png');
+	const buffer = await fileIconToBuffer('Safari');
+	const fileType = await fileTypeFromBuffer(buffer);
+	t.is(fileType.ext, 'png');
 });
 
 test('array of single app name', async t => {
 	const apps = ['Finder'];
 	const buffers = await fileIconToBuffer(apps);
+	const fileType = await fileTypeFromBuffer(buffers[0]);
 
 	t.is(buffers.length, 1);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
+	t.is(fileType.ext, 'png');
 });
 
 test('array of multiple app names', async t => {
@@ -56,12 +59,18 @@ test('array of multiple app names', async t => {
 	const buffers = await fileIconToBuffer(apps);
 
 	t.is(buffers.length, 2);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
-	t.is((await FileType.fromBuffer(buffers[1])).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(buffers[0]);
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(buffers[1]);
+	t.is(fileType2.ext, 'png');
 });
 
 test('app bundle ID', async t => {
-	t.is((await FileType.fromBuffer(await fileIconToBuffer('com.apple.Safari'))).ext, 'png');
+	const buffer = await fileIconToBuffer('com.apple.Safari');
+	const fileType = await fileTypeFromBuffer(buffer);
+	t.is(fileType.ext, 'png');
 });
 
 test('array of single app bundle ID', async t => {
@@ -69,7 +78,9 @@ test('array of single app bundle ID', async t => {
 	const buffers = await fileIconToBuffer(apps);
 
 	t.is(buffers.length, 1);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
+
+	const fileType = await fileTypeFromBuffer(buffers[0]);
+	t.is(fileType.ext, 'png');
 });
 
 test('array of multiple app bundle IDs', async t => {
@@ -77,14 +88,20 @@ test('array of multiple app bundle IDs', async t => {
 	const buffers = await fileIconToBuffer(ids);
 
 	t.is(buffers.length, 2);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
-	t.is((await FileType.fromBuffer(buffers[1])).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(buffers[0]);
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(buffers[1]);
+	t.is(fileType2.ext, 'png');
 });
 
 test('app process ID', async t => {
 	const finderPID = await processID('Finder');
+	const buffer = await fileIconToBuffer(finderPID);
+	const fileType = await fileTypeFromBuffer(buffer);
 
-	t.is((await FileType.fromBuffer(await fileIconToBuffer(finderPID))).ext, 'png');
+	t.is(fileType.ext, 'png');
 });
 
 test('array of single app process ID', async t => {
@@ -94,7 +111,9 @@ test('array of single app process ID', async t => {
 	const buffers = await fileIconToBuffer(pids);
 
 	t.is(buffers.length, 1);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
+
+	const fileType = await fileTypeFromBuffer(buffers[0]);
+	t.is(fileType.ext, 'png');
 });
 
 test('array of multiple app process IDs', async t => {
@@ -103,8 +122,12 @@ test('array of multiple app process IDs', async t => {
 	const buffers = await fileIconToBuffer(pids);
 
 	t.is(buffers.length, 2);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
-	t.is((await FileType.fromBuffer(buffers[1])).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(buffers[0]);
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(buffers[1]);
+	t.is(fileType2.ext, 'png');
 });
 
 test('array of mixed types', async t => {
@@ -114,20 +137,29 @@ test('array of mixed types', async t => {
 	const buffers = await fileIconToBuffer(apps);
 
 	t.is(buffers.length, 3);
-	t.is((await FileType.fromBuffer(buffers[0])).ext, 'png');
-	t.is((await FileType.fromBuffer(buffers[1])).ext, 'png');
-	t.is((await FileType.fromBuffer(buffers[2])).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(buffers[0]);
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(buffers[1]);
+	t.is(fileType2.ext, 'png');
+
+	const fileType3 = await fileTypeFromBuffer(buffers[2]);
+	t.is(fileType3.ext, 'png');
 });
 
 test('file path', async t => {
-	t.is((await FileType.fromBuffer(await fileIconToBuffer('/Applications/Safari.app'))).ext, 'png');
+	const buffer = await fileIconToBuffer('/Applications/Safari.app');
+	const fileType = await fileTypeFromBuffer(buffer);
+	t.is(fileType.ext, 'png');
 });
 
 test('write file single app name', async t => {
 	const destination = temporaryFile();
 	await fileIconToFile('Safari', {destination});
 	const icon = fs.readFileSync(destination);
-	t.is((await FileType.fromBuffer(icon)).ext, 'png');
+	const fileType = await fileTypeFromBuffer(icon);
+	t.is(fileType.ext, 'png');
 });
 
 test('write file array of single app name', async t => {
@@ -136,7 +168,9 @@ test('write file array of single app name', async t => {
 	await fileIconToFile(['Safari'], {destination});
 
 	t.is(destination.length, 1);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
+
+	const fileType = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType.ext, 'png');
 });
 
 test('write files array of app names', async t => {
@@ -145,15 +179,20 @@ test('write files array of app names', async t => {
 	await fileIconToFile(['Safari', 'Finder'], {destination});
 
 	t.is(destination.length, 2);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[1]))).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(fs.readFileSync(destination[1]));
+	t.is(fileType2.ext, 'png');
 });
 
 test('write file single app bundle ID', async t => {
 	const destination = temporaryFile();
 	await fileIconToFile('com.apple.Safari', {destination});
 	const icon = fs.readFileSync(destination);
-	t.is((await FileType.fromBuffer(icon)).ext, 'png');
+	const fileType = await fileTypeFromBuffer(icon);
+	t.is(fileType.ext, 'png');
 });
 
 test('write file array of single app bundle ID', async t => {
@@ -162,7 +201,9 @@ test('write file array of single app bundle ID', async t => {
 	await fileIconToFile(['com.apple.Safari'], {destination});
 
 	t.is(destination.length, 1);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
+
+	const fileType = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType.ext, 'png');
 });
 
 test('write files array of app bundle IDs', async t => {
@@ -171,8 +212,12 @@ test('write files array of app bundle IDs', async t => {
 	await fileIconToFile(['com.apple.Safari', 'com.apple.Finder'], {destination});
 
 	t.is(destination.length, 2);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[1]))).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(fs.readFileSync(destination[1]));
+	t.is(fileType2.ext, 'png');
 });
 
 test('write file single app process ID', async t => {
@@ -180,8 +225,8 @@ test('write file single app process ID', async t => {
 	const pid = await processID('Finder');
 	await fileIconToFile(pid, {destination});
 	const icon = fs.readFileSync(destination);
-
-	t.is((await FileType.fromBuffer(icon)).ext, 'png');
+	const fileType = await fileTypeFromBuffer(icon);
+	t.is(fileType.ext, 'png');
 });
 
 test('write file array of single app process ID', async t => {
@@ -192,7 +237,9 @@ test('write file array of single app process ID', async t => {
 	await fileIconToFile(pids, {destination});
 
 	t.is(destination.length, 1);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
+
+	const fileType = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType.ext, 'png');
 });
 
 test('write files array of app process IDs', async t => {
@@ -203,8 +250,12 @@ test('write files array of app process IDs', async t => {
 	await fileIconToFile(pids, {destination});
 
 	t.is(destination.length, 2);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[1]))).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(fs.readFileSync(destination[1]));
+	t.is(fileType2.ext, 'png');
 });
 
 test('write files array of mixed types', async t => {
@@ -214,7 +265,13 @@ test('write files array of mixed types', async t => {
 	await fileIconToFile(apps, {destination});
 
 	t.is(destination.length, 3);
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[0]))).ext, 'png');
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[1]))).ext, 'png');
-	t.is((await FileType.fromBuffer(fs.readFileSync(destination[2]))).ext, 'png');
+
+	const fileType1 = await fileTypeFromBuffer(fs.readFileSync(destination[0]));
+	t.is(fileType1.ext, 'png');
+
+	const fileType2 = await fileTypeFromBuffer(fs.readFileSync(destination[1]));
+	t.is(fileType2.ext, 'png');
+
+	const fileType3 = await fileTypeFromBuffer(fs.readFileSync(destination[2]));
+	t.is(fileType3.ext, 'png');
 });

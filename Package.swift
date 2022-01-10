@@ -1,14 +1,22 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
-	name: "file-icon",
+	name: "FileIcon",
 	platforms: [
 		.macOS(.v10_10)
 	],
+	products: [
+		.executable(
+			name: "file-icon",
+			targets: [
+				"FileIconCLI"
+			]
+		)
+	],
 	targets: [
-		.target(
-			name: "file-icon"
+		.executableTarget(
+			name: "FileIconCLI"
 		)
 	]
 )
