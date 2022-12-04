@@ -1,11 +1,9 @@
 import Cocoa
 
 func getIcon(input: String, size: Int) -> Data? {
-	let path = (
-		input.contains(".") ?
-			NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: input) :
-			NSWorkspace.shared.fullPath(forApplication: input)
-	) ?? input
+	let path = NSWorkspace.shared.fullPath(forApplication: input)
+		?? NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: input)
+		?? input
 
 	guard FileManager.default.fileExists(atPath: path) else {
 		return nil
