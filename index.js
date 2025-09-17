@@ -83,8 +83,8 @@ export async function fileIconToFile(file, options) {
 
 	const isArray = Array.isArray(file);
 
-	if (typeof file === 'string' && typeof options.destination !== 'string') {
-		throw new TypeError(`Expected \`options.destination\` to be of type \`string\` when \`file\` is of type \`string\`, got \`${typeof options.destination}\``);
+	if ((typeof file === 'string' || typeof file === 'number') && typeof options.destination !== 'string') {
+		throw new TypeError(`Expected \`options.destination\` to be of type \`string\` when \`file\` is of type \`string\` or \`number\`, got \`${typeof options.destination}\``);
 	} else if (isArray && !Array.isArray(options.destination)) {
 		throw new TypeError(`Expected \`options.destination\` to be of type \`array\` when \`file\` is of type \`array\`, got \`${typeof options.destination}\``);
 	} else if (isArray && file.length !== options.destination.length) {

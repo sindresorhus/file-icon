@@ -29,7 +29,7 @@ buffers.map((buffer, index) => fs.writeFileSync(`${apps[index]}-icon.png`, buffe
 const buffer2 = await fileIconToBuffer('com.apple.Safari', {size: 64});
 fs.writeFileSync('safari-icon.png', buffer2);
 
-// Or a an array of bundle IDs
+// Or an array of bundle IDs
 const bundleIds = ['com.apple.Finder', 'com.apple.Safari'];
 const buffers2 = await fileIconToBuffer(bundleIds);
 buffers2.map((buffer, index) => fs.writeFileSync(`${bundleIds[index]}-icon.png`, buffer));
@@ -47,14 +47,13 @@ buffers3.map((buffer, index) => fs.writeFileSync(`${pids[index]}-icon.png`, buff
 const buffer4 = await fileIconToBuffer('/Applications/Safari.app');
 fs.writeFileSync('safari-icon.png', buffer4);
 
-// Or an array of filenames
+// Or an array of file paths
 const paths = ['/Applications/Safari.app', '/Applications/Calculator.app'];
 const buffers4 = await fileIconToBuffer(paths);
-buffers4.map((buffer, index) => fs.writeFileSync(`${paths[index].split(/\/|\./)[2]}-icon.png`, buffer));
-fs.writeFileSync('jpeg-file-type-icon.png', buffer4);
+buffers4.map((buffer, index) => fs.writeFileSync(`app-${index}-icon.png`, buffer));
 
 // Or a mix of all of them!
-await fileIconToBuffer(['Finder', 257, 'com.apple.Calculator', '/Applications/Safari.app']);
+const mixedBuffers = await fileIconToBuffer(['Finder', 257, 'com.apple.Calculator', '/Applications/Safari.app']);
 
 // You can also use `fileIconToFile` and provide `options.destination` with the path to write to
 await fileIconToFile('Safari', {destination: 'safari-icon.png'});

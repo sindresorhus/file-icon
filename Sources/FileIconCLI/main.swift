@@ -46,6 +46,9 @@ for input in inputs {
 	if let destination = input.destination {
 		CLI.tryOrExit {
 			try icon.write(to: URL(fileURLWithPath: destination, isDirectory: false), options: .atomic)
+
+			// When targeting modern macOS.
+			// try icon.write(to: URL(filePath: destination, directoryHint: .notDirectory), options: .atomic)
 		}
 	} else {
 		CLI.standardOutput.write(icon)
